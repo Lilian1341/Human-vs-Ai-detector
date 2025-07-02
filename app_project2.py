@@ -6,6 +6,9 @@ import torchviz
 import torch.nn as nn
 # import tokenizer
  
+import streamlit as st
+
+st.write("PyTorch version:", torch.__version__)
 
 
 # class CNN(nn.Module):
@@ -703,7 +706,7 @@ def make_prediction(text, model_choice, models):
         
         if prediction is not None and probabilities is not None:
             # Convert to readable format
-            class_names = ['Human', 'AI']
+            class_names = ['AI', 'Human']
             prediction_label = class_names[prediction]
             return prediction_label, probabilities
         else:
@@ -912,10 +915,16 @@ if page == "🔮 Single Prediction":
                         if prediction and probabilities is not None:
                             col1, col2 = st.columns([3, 1])
                             with col1:
-                                if prediction == "Human":
-                                    st.success(f"🎯 Prediction: **{prediction} Text**")
-                                else:
-                                    st.error(f"🎯 Prediction: **{prediction} Text**")
+                               if prediction == "AI":
+                                st.error("🎯 Prediction: 🤖 **AI-generated text**")
+                               else:
+                                 st.success("🎯 Prediction: ✍️ **Human-written text**")
+
+                            # with col1:
+                            #     if prediction == "Human":
+                            #         st.success(f"🎯 Prediction: **{prediction} Text**")
+                            #     else:
+                            #         st.error(f"🎯 Prediction: **{prediction} Text**")
                             with col2:
                                 confidence = max(probabilities)
                                 st.metric("Confidence", f"{confidence:.1%}")
@@ -923,12 +932,12 @@ if page == "🔮 Single Prediction":
                             st.subheader("📊 Prediction Probabilities")
                             col1, col2 = st.columns(2)
                             with col1:
-                                st.metric("😞 Human", f"{probabilities[0]:.1%}")
+                                st.metric("😞 AI", f"{probabilities[0]:.1%}")
                             with col2:
-                                st.metric("😊 AI", f"{probabilities[1]:.1%}")
+                                st.metric("😊 Human", f"{probabilities[1]:.1%}")
 
                             chart_df = pd.DataFrame({
-                                "Label": ["Human", "AI"],
+                                "Label": ["AI", "Human"],
                                 "Probability": probabilities
                             })
                             st.bar_chart(chart_df.set_index("Label"))
